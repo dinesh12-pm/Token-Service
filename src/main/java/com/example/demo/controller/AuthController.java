@@ -96,6 +96,8 @@ public class AuthController {
     public void generatePdf(HttpServletResponse response) throws IOException {
         // 1. Set response headers
         response.setContentType("application/pdf");
+
+        // 2. Force download with a proper file name
         response.setHeader("Content-Disposition", "attachment; filename=employees.pdf");
 
         // 2. Delegate PDF writing to service
