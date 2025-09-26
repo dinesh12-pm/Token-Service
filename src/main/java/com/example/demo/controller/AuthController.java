@@ -7,7 +7,10 @@ import com.example.demo.request.AuthRequest;
 import com.example.demo.service.AccessTokenService;
 import com.example.demo.service.PdfService;
 import com.example.demo.util.JWTUtil;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.catalina.User;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,6 +20,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.time.LocalDateTime;
 
 
@@ -86,9 +91,15 @@ public class AuthController {
             throw e;
         }
     }
-//
-//    @GetMapping("/employees/pdf")
-//    public ResponseEntity<byte[]> generatePdf(){
-//
-//    }
+
+    @GetMapping("/employees/pdf")
+    public void generatePdf(HttpServletResponse response) throws IOException {
+        // 1. Set response headers
+        response.setContentType("application/pdf");
+        response.setHeader("Content-Disposition", "attachment; filename=employees.pdf");
+
+        // 2. Delegate PDF writing to service
+        pdfService.generateEmployeePdf(response.getOutputStream());
+
+    }
 }
