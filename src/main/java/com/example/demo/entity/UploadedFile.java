@@ -18,14 +18,19 @@ public class UploadedFile {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
+    @Column(name = "file_name")
     private String fileName;
 
+    @Column(name = "s3_url")
     private String s3Url;
 
+    @Column(name = "file_size")
     private Long fileSize;
 
+    @Column(name = "uploaded_at")
     private Instant uploadedAt = Instant.now();
 
 }
