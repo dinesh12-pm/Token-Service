@@ -1,11 +1,13 @@
 package com.example.demo.controller;
 
 
+import com.example.demo.Response.FileUploadResponse;
 import com.example.demo.entity.UserCredentials;
 import com.example.demo.repository.UserCredentialsRepository;
 import com.example.demo.request.AuthRequest;
 import com.example.demo.service.AccessTokenService;
 import com.example.demo.service.PdfService;
+import com.example.demo.service.S3Service;
 import com.example.demo.util.JWTUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.catalina.User;
@@ -33,13 +35,15 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final AccessTokenService accessTokenService;
     private final PdfService pdfService;
+    private final S3Service s3Service;
 
-    public AuthController(JWTUtil jwtUtil, UserCredentialsRepository userCredentialsRepository, AuthenticationManager authenticationManager, AccessTokenService accessTokenService, PdfService pdfService) {
+    public AuthController(JWTUtil jwtUtil, UserCredentialsRepository userCredentialsRepository, AuthenticationManager authenticationManager, AccessTokenService accessTokenService, PdfService pdfService, S3Service s3Service) {
         this.jwtUtil = jwtUtil;
         this.userCredentialsRepository = userCredentialsRepository;
         this.authenticationManager = authenticationManager;
         this.accessTokenService = accessTokenService;
         this.pdfService = pdfService;
+        this.s3Service = s3Service;
     }
 
 
@@ -103,5 +107,16 @@ public class AuthController {
         // 2. Delegate PDF writing to service
         pdfService.generateEmployeePdf(response.getOutputStream());
 
+    }
+
+    public ResponseEntity<FileUploadResponse> uploadFile(@RequestParam("file") MultipartFile file,
+                                             @RequestParam("keyName") String keyName){
+
+        try{
+            FileUploadResponse response = s3Service.uploadToS3(keyName,file);
+            return ResponseEntity.ok(response);
+        } catch (IOException e) {
+            throw new RuntimeException("Error while uploading file to the bucket!!");
+        }
     }
 }

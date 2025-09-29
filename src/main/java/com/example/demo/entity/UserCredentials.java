@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.antlr.v4.runtime.misc.NotNull;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,7 +26,7 @@ public class UserCredentials implements UserDetails {
     @Column(name = "user_id")
     private Long id;
 
-    @Column(name = "user_name")
+    @Column(name = "user_name",unique = true)
     private String userName;
 
     @Column(name = "password")

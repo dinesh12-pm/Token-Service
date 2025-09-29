@@ -2,7 +2,6 @@ package com.example.demo.service;
 
 import com.example.demo.entity.UserDetails;
 import com.example.demo.repository.UserDetailsRepository;
-import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -10,10 +9,8 @@ import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.properties.UnitValue;
-import jakarta.servlet.ServletOutputStream;
 import org.springframework.stereotype.Service;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
@@ -64,7 +61,6 @@ public class PdfService {
             table.addCell(employee.getDepartment());
             table.addCell(employee.getDesignation());
         }
-
         document.add(table);
         document.close();
 
