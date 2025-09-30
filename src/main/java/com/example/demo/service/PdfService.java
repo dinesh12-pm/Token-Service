@@ -25,7 +25,9 @@ public class PdfService {
         this.userDetailsRepository = userDetailsRepository;
     }
 
-    public void generateEmployeePdf(OutputStream outputStream) throws IOException{
+
+   // Method to generate pdf and send the file as response
+    public void  generateEmployeePdf(OutputStream outputStream) throws IOException{
         List<UserDetails> employees = userDetailsRepository.findAll();
 
 

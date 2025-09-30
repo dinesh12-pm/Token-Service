@@ -23,8 +23,12 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 
 
 @RestController
@@ -96,32 +100,59 @@ public class AuthController {
         }
     }
 
+    //TO generate pdf and send the same to the client
+
+//    @GetMapping("/employees/pdf")
+//    public void generatePdf(HttpServletResponse response) throws IOException {
+//        // 1. Set response headers
+//        response.setContentType("application/pdf");
+//
+//        // 2. Force download with a proper file name
+//        response.setHeader("Content-Disposition", "attachment; filename=employees.pdf");
+//
+//        // 2. Delegate PDF writing to service
+//        pdfService.generateEmployeePdf(response.getOutputStream());
+//
+//    }
+
+    // To upload to S3 bucket and send the reponse with fileName,filePath,uploadedAt
+
+//    @PostMapping("/s3Upload")
+//    public ResponseEntity<FileUploadResponse> uploadFile(@RequestParam("file") MultipartFile file){
+//
+//        try{
+//            // Get original filename
+//            String originalFilename = file.getOriginalFilename(); // e.g., "resume.pdf"
+//
+//            // Optional: prepend timestamp or userId to avoid collisions
+//            String keyName = "uploads/" + System.currentTimeMillis() + "_" + originalFilename;
+//            FileUploadResponse response = s3Service.uploadToS3(keyName,file);
+//            return ResponseEntity.ok(response);
+//        } catch (IOException e) {
+//            throw new RuntimeException("Error while uploading file to the bucket!!");
+//        }
+//    }
     @GetMapping("/employees/pdf")
-    public void generatePdf(HttpServletResponse response) throws IOException {
-        // 1. Set response headers
-        response.setContentType("application/pdf");
+    public ResponseEntity<Map<String, Object>> generatePdfAndUpload() throws IOException {
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    pdfService.generateEmployeePdf(baos);
+    byte[] pdfBytes = baos.toByteArray();
 
-        // 2. Force download with a proper file name
-        response.setHeader("Content-Disposition", "attachment; filename=employees.pdf");
+    String fileName = "uploads/" + System.currentTimeMillis() + "_employees.pdf";
 
-        // 2. Delegate PDF writing to service
-        pdfService.generateEmployeePdf(response.getOutputStream());
+    // 1. Upload to S3
+    s3Service.uploadFile(pdfBytes, fileName, "application/pdf");
 
-    }
+    // 2. Generate presigned URL
+    String presignedUrl = s3Service.generatePresignedUrl(fileName);
 
-    @PostMapping("/s3Upload")
-    public ResponseEntity<FileUploadResponse> uploadFile(@RequestParam("file") MultipartFile file){
+    // 3. Return JSON with metadata
+    Map<String, Object> response = new HashMap<>();
+    response.put("fileName", fileName);
+    response.put("fileSize", pdfBytes.length);
+    response.put("uploadedAt", Instant.now().toString());
+    response.put("downloadUrl", presignedUrl);
 
-        try{
-            // Get original filename
-            String originalFilename = file.getOriginalFilename(); // e.g., "resume.pdf"
-
-            // Optional: prepend timestamp or userId to avoid collisions
-            String keyName = "uploads/" + System.currentTimeMillis() + "_" + originalFilename;
-            FileUploadResponse response = s3Service.uploadToS3(keyName,file);
-            return ResponseEntity.ok(response);
-        } catch (IOException e) {
-            throw new RuntimeException("Error while uploading file to the bucket!!");
-        }
-    }
+    return ResponseEntity.ok(response);
+}
 }
