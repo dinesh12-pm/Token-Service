@@ -58,36 +58,36 @@ public class S3Service {
             return presignedRequest.url().toString();
         }
 
+
+
+   // TO upload file to S3 and send the corresponding response
+
+    public FileUploadResponse uploadToS3(String keyName, MultipartFile file) throws IOException {
+        String fileUrl = "";
+        PutObjectRequest request = PutObjectRequest.builder()
+                .bucket(bucketName)
+                .key(keyName)
+                .build();
+
+        s3Client.putObject(request,RequestBody.fromBytes(file.getBytes()));
+        fileUrl =  "https://" + bucketName + ".s3.amazonaws.com/" + keyName;
+        UploadedFile uploadedFile = UploadedFile.builder()
+                .fileName(keyName)
+                .s3Url(fileUrl)
+                .fileSize(file.getSize())
+                .uploadedAt(Instant.now())
+                .build();
+        uploadedFileRepository.save(uploadedFile);
+
+FileUploadResponse res = FileUploadResponse.builder()
+        .fileName(uploadedFile.getFileName())
+        .filePath(uploadedFile.getS3Url())
+        .fileSize(uploadedFile.getFileSize())
+        .uploadedAt(uploadedFile.getUploadedAt())
+        .build();
+    return res;
     }
-
-//    TO upload file to S3 and send the corresponding response
-
-//    public FileUploadResponse uploadToS3(String keyName, MultipartFile file) throws IOException {
-//        String fileUrl = "";
-//        PutObjectRequest request = PutObjectRequest.builder()
-//                .bucket(bucketName)
-//                .key(keyName)
-//                .build();
-//
-//        s3Client.putObject(request,RequestBody.fromBytes(file.getBytes()));
-//        fileUrl =  "https://" + bucketName + ".s3.amazonaws.com/" + keyName;
-//        UploadedFile uploadedFile = UploadedFile.builder()
-//                .fileName(keyName)
-//                .s3Url(fileUrl)
-//                .fileSize(file.getSize())
-//                .uploadedAt(Instant.now())
-//                .build();
-//        uploadedFileRepository.save(uploadedFile);
-//
-//FileUploadResponse res = FileUploadResponse.builder()
-//        .fileName(uploadedFile.getFileName())
-//        .filePath(uploadedFile.getS3Url())
-//        .fileSize(uploadedFile.getFileSize())
-//        .uploadedAt(uploadedFile.getUploadedAt())
-//        .build();
-//    return res;
-//    }
-
+}
 
 
 

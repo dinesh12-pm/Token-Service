@@ -117,21 +117,21 @@ public class AuthController {
 
     // To upload to S3 bucket and send the reponse with fileName,filePath,uploadedAt
 
-//    @PostMapping("/s3Upload")
-//    public ResponseEntity<FileUploadResponse> uploadFile(@RequestParam("file") MultipartFile file){
-//
-//        try{
-//            // Get original filename
-//            String originalFilename = file.getOriginalFilename(); // e.g., "resume.pdf"
-//
-//            // Optional: prepend timestamp or userId to avoid collisions
-//            String keyName = "uploads/" + System.currentTimeMillis() + "_" + originalFilename;
-//            FileUploadResponse response = s3Service.uploadToS3(keyName,file);
-//            return ResponseEntity.ok(response);
-//        } catch (IOException e) {
-//            throw new RuntimeException("Error while uploading file to the bucket!!");
-//        }
-//    }
+    @PostMapping("/s3Upload")
+    public ResponseEntity<FileUploadResponse> uploadFile(@RequestParam("file") MultipartFile file){
+
+        try{
+            // Get original filename
+            String originalFilename = file.getOriginalFilename(); // e.g., "resume.pdf"
+
+            // Optional: prepend timestamp or userId to avoid collisions
+            String keyName = "uploads/" + System.currentTimeMillis() + "_" + originalFilename;
+            FileUploadResponse response = s3Service.uploadToS3(keyName,file);
+            return ResponseEntity.ok(response);
+        } catch (IOException e) {
+            throw new RuntimeException("Error while uploading file to the bucket!!");
+        }
+    }
     @GetMapping("/employees/pdf")
     public ResponseEntity<Map<String, Object>> generatePdfAndUpload() throws IOException {
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
