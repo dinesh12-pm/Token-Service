@@ -102,18 +102,18 @@ public class AuthController {
 
     //TO generate pdf and send the same to the client
 
-//    @GetMapping("/employees/pdf")
-//    public void generatePdf(HttpServletResponse response) throws IOException {
-//        // 1. Set response headers
-//        response.setContentType("application/pdf");
-//
-//        // 2. Force download with a proper file name
-//        response.setHeader("Content-Disposition", "attachment; filename=employees.pdf");
-//
-//        // 2. Delegate PDF writing to service
-//        pdfService.generateEmployeePdf(response.getOutputStream());
-//
-//    }
+    @GetMapping("/employees/pdf/genrate")
+    public void generatePdf(HttpServletResponse response) throws IOException {
+        // 1. Set response headers
+        response.setContentType("application/pdf");
+
+        // 2. Force download with a proper file name
+        response.setHeader("Content-Disposition", "attachment; filename=employees.pdf");
+
+        // 2. Delegate PDF writing to service
+        pdfService.generateEmployeePdf(response.getOutputStream());
+
+    }
 
     // To upload to S3 bucket and send the reponse with fileName,filePath,uploadedAt
 

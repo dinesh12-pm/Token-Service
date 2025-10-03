@@ -36,7 +36,7 @@ public class PdfService {
         Document document = new Document(pdf, PageSize.A4.rotate());
 
         document.add(new Paragraph("Employee Details").setBold().setFontSize(18));
-        document.setMargins(20, 20, 20, 20); // top, right, bottom, left
+        document.setMargins(40, 40, 40, 40); // top, right, bottom, left
 
         Table table = new Table(new float[]{2, 1, 1, 5, 2, 2, 2, 2, 2});
         table.setWidth(UnitValue.createPercentValue(100));
