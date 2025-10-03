@@ -1,6 +1,7 @@
 package com.example.demo.config;
 
 
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -44,5 +45,10 @@ public class S3Config {
                 .region(Region.of(region))
                 .credentialsProvider(DefaultCredentialsProvider.create())
                 .build();
+    }
+    @PostConstruct
+    public void init() {
+        System.out.println("Access Key: " + accessKey);
+        System.out.println("Secret Key: " + secretKey);
     }
 }
