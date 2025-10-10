@@ -1,0 +1,54 @@
+pipeline {
+    agent { label 'build' }
+
+    tools {
+        gradle 'gradle-7.4.2'
+        jdk 'jdk-17'
+    }
+
+    parameters {
+        string(name: 'BRANCH', defaultValue: 'main', description: 'Branch to build')
+    }
+
+    stages {
+        stage('Checkout Code') {
+            steps {
+                cleanWs()
+                checkout scm
+            }
+        }
+
+        stage('Build with Gradle') {
+            steps {
+                echo 'Building the Java project using Gradle...'
+                sh 'gradle clean build'
+            }
+        }
+
+        stage('Run Unit Tests') {
+            steps {
+                echo 'Running unit tests...'
+                sh 'gradle test'
+            }
+        }
+
+        stage('Run Application') {
+            steps {
+                echo 'Starting Java application...'
+                // Adjust the path to your JAR file if it’s inside build/libs
+                sh 'java -jar build/libs/*.jar &'
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "✅ Build and Run successful!"
+            archiveArtifacts artifacts: 'build/libs/*.jar', fingerprint: true
+        }
+        failure {
+            echo "❌ Build failed. Check console output for details."
+        }
+    }
+}
+
