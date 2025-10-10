@@ -2,8 +2,8 @@ pipeline {
     agent { label 'build' }
 
     tools {
-        gradle 'gradle-7.4.2'
-        jdk 'jdk-17'
+        jdk 'JAVA'
+	gradle 'Gradle''
     }
 
     parameters {
